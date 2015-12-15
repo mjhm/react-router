@@ -14,15 +14,16 @@ config without it:
 </Router>
 ```
 
-When the user visits `/`, the App component is rendered, but none of the
-children are, so `this.props.children` inside of `App` will be undefined.
-To render some default UI you could easily do `{this.props.children ||
-<Home/>}`.
+When the user visits `/`, the App component is rendered, but the route
+doesn't match `/accounts` or `/statements`, so `this.props.children` is
+`undefined`. To render a default component, say `<Home/>`, you could
+easily include `{this.props.children || <Home/>}` in the `App` component.
 
-But now `Home` can't participate in routing, like the `onEnter` hooks,
-etc. You render in the same position as `Accounts` and `Statements`, so
-the router allows you to have `Home` be a first class route component with
-`IndexRoute`.
+However the bare `<Home/>` component doesn't participate in routing,
+and therefore can't take advantage of features such as the `onEnter` hooks,
+etc. By specifying it as an `IndexRoute`, `<Home/>` will be `App`'s
+`this.props.children`. So it will render as a first
+class route component peer of `Accounts` and `Statements`.
 
 ```js
 <Router>
@@ -39,9 +40,11 @@ route for `Home` that can participate in routing.
 
 ## Index Links
 
-If you were to `<Link to="/">Home</Link>` in this app, it would always
-be active since every URL starts with `/`. This is a problem because
-we'd like to link to `Home` but only be active if `Home` is rendered.
+If you were to include `<Link to="/">Home</Link>` in this app, the
+resulting link would always be rendered with the `activeClassName` and
+`activeStyle` since every URL starts with `/`. This is a problem because
+we'd like to link to `Home` but only show it as active when the `<Home/>`
+component is rendered.
 
-To have a link to `/` that is only active when the `Home` route is
-rendered, use `<IndexLink to="/">Home</IndexLink>`.
+Use `<IndexLink to="/">Home</IndexLink>` to link to the `<Home/>` index
+route so that it is only active for the specific `/` route.
